@@ -1,0 +1,59 @@
+# Proyecto Docker Compose de KioskoNube (se mantiene el nombre "infra"
+# para reutilizar los contenedores y el volumen de RabbitMQ existentes)
+name: infra
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - kioskonube-net
+
+  rabbit-admin-service:
+    build: ../kioskonube-rabbit-admin-service
+    container_name: rabbit-admin-service
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8085:8085"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    networks:
+      - kioskonube-net
+
+  notificaciones-service:
+    build: ../kioskonube-notificaciones-service
+    container_name: notificaciones-service
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8086:8086"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_MODE: ${MAIL_MODE:-simulado}
+    networks:
+      - kioskonube-net
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  kioskonube-net:
+    name: kioskonube-net
