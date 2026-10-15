@@ -51,6 +51,26 @@ services:
     networks:
       - kioskonube-net
 
+  ordenes-service:
+    build: ../kioskonube-ordenes-service
+    container_name: ordenes-service
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+    ports:
+      - "8083:8083"
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-kioskonube}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - kioskonube-net
+
 volumes:
   rabbitmq_data:
 
