@@ -9,6 +9,7 @@ Docker Compose para desplegar KioskoNube en AWS EC2.
 | rabbitmq | 15672 | Broker de mensajería (consola de administración) |
 | rabbit-admin-service | 8085 | Administración de colas, exchanges y bindings |
 | notificaciones-service | 8086 | Productor/consumidor de notificaciones por correo |
+| despachos-service | 8084 | Despachos (PostgreSQL en RDS, consume orden.creada y publica despacho.actualizado) |
 
 ## Despliegue en la EC2
 
