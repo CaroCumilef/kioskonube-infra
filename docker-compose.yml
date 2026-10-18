@@ -91,6 +91,15 @@ services:
     networks:
       - kioskonube-net
 
+  frontend:
+    build: ../kioskonube-frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    networks:
+      - kioskonube-net
+
 volumes:
   rabbitmq_data:
 
